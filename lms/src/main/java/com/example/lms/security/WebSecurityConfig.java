@@ -54,6 +54,11 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/**", "/api/test/all", "/h2-console/**").permitAll()
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+                                ).permitAll()
                                 .requestMatchers("/api/test/user").hasRole("USER")
                                 .requestMatchers("/api/users").hasRole("ADMIN")
                                 .requestMatchers("/api/users").hasAuthority("MANAGE_USER")

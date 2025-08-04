@@ -92,7 +92,7 @@ public class AuthController {
                 .email(user.getEmail())
                 .libraryId(user.getLibraryId())
                 .role(roles)
-                .borrowedBooks(0)
+                .borrowingRecords(user.getBorrowingRecords())
                 .build();
 
         userService.addUser(newUser);

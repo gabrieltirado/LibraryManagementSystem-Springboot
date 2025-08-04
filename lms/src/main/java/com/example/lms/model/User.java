@@ -37,9 +37,9 @@ public class User {
     @Builder.Default
     private Set<Role> role = new HashSet<>();
 
-
     @Column(name = "borrowed_books", nullable = false)
     // Field user in BorrowingRecord refers to the user field in User
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BorrowingRecord> borrowingRecords;
+
 }
