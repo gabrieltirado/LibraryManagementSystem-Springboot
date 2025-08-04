@@ -11,6 +11,7 @@ import com.example.lms.model.Book;
 import com.example.lms.repository.BorrowingRecordRepository;
 import com.example.lms.repository.UserRepository;
 import com.example.lms.repository.BookRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,8 @@ public class BorrowingService {
             throw new BookNotAvailableException("Book is not available for borrowing");
         }
 
-        long activeBorrows = borrowingRecordRepository.countByUserIdAndReturnedDateIsNull(userId);
-        if (activeBorrows >= 2) {
+        // Check if the user has reached the borrowing limit
+        if (!canUserBorrow(user)) {
             throw new BorrowingLimitExceededException("User has reached the borrowing limit (2 books)");
         }
         if (borrowingRecordRepository.existsByUserIdAndBookId(userId, bookId)) {
@@ -58,8 +59,8 @@ public class BorrowingService {
         borrowingRecord.setDueDate(dueDate);
         borrowingRecord.setReturnedDate(null);
 
-        book.setAvailability(false);
-        bookRepository.save(book);
+        // Update book availability when a book is borrowed or returned
+        updateAvailability(book);
 
         return borrowingRecordRepository.save(borrowingRecord);
     }
@@ -72,8 +73,7 @@ public class BorrowingService {
 
         // Update book availability getting the book from the record
         Book book = borrowingRecord.getBook();
-        book.setAvailability(true);
-        bookRepository.save(book);
+        updateAvailability(book);
 
         return borrowingRecordRepository.save(borrowingRecord);
     }
@@ -81,4 +81,31 @@ public class BorrowingService {
     public List<BorrowingRecord> getBorrowingHistory(Long userId) {
         return borrowingRecordRepository.findAllByUserIdOrderByBorrowDateDesc(userId);
     }
+
+    public boolean canUserBorrow(User user) {
+        long activeLoans = user.getBorrowingRecords().stream()
+                .filter(BorrowingRecord::isActive)
+                .count();
+
+        return activeLoans < 2;
+    }
+
+    /**
+     * Updates the availability of a book based on its borrowing records.
+     * If there are borrowing records with ReturnedDate as null, the book is not available.
+     * If there are no such records, the book is available.
+     *
+     * @param book The book to update.
+     */
+    @Transactional
+    public void updateAvailability(Book book) {
+        boolean available = borrowingRecordRepository
+                .findByBookIdAndReturnedDateIsNull(book.getId())
+                .isEmpty();
+
+        book.setAvailability(available);
+        bookRepository.save(book);
+    }
+
+
 }

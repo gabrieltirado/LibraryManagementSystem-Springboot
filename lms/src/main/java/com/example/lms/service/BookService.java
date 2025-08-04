@@ -3,6 +3,8 @@ package com.example.lms.service;
 import com.example.lms.exception.BookNotFoundException;
 import com.example.lms.model.Book;
 import com.example.lms.repository.BookRepository;
+import com.example.lms.repository.BorrowingRecordRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private BorrowingRecordRepository borrowingRecordRepository;
 
     public Book addBook(Book book) {
         return bookRepository.save(book);

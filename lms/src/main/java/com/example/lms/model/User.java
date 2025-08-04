@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,5 +39,7 @@ public class User {
 
 
     @Column(name = "borrowed_books", nullable = false)
-    private int borrowedBooks;
+    // Field user in BorrowingRecord refers to the user field in User
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BorrowingRecord> borrowingRecords;
 }

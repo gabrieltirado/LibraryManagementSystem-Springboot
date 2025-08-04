@@ -33,11 +33,15 @@ public class BorrowingRecord {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
     private Date borrowDate;
     private Date dueDate;
     private Date returnedDate;
+
+    public boolean isActive() {
+        return returnedDate == null;
+    }
 }
