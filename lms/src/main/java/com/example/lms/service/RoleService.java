@@ -1,5 +1,6 @@
 package com.example.lms.service;
 
+import com.example.lms.exception.RoleNotFoundException;
 import com.example.lms.model.Role;
 import com.example.lms.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class RoleService {
 
     public Role updateRole(Long id, Role roleDetails) {
         Role role = roleRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Role not found"));
+            .orElseThrow(() -> new RoleNotFoundException("Role not found"));
         role.setName(roleDetails.getName());
         return roleRepository.save(role);
     }

@@ -1,5 +1,6 @@
 package com.example.lms.service;
 
+import com.example.lms.exception.BookNotFoundException;
 import com.example.lms.model.Book;
 import com.example.lms.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class BookService {
 
     public Book updateBook(Long id, Book bookDetails) {
         Book book = bookRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Book not found"));
+            .orElseThrow(() -> new BookNotFoundException("Book not found"));
         book.setTitle(bookDetails.getTitle());
         book.setAuthor(bookDetails.getAuthor());
         book.setIsbn(bookDetails.getIsbn());
