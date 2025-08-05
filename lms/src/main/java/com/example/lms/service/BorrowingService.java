@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowingService {
@@ -69,6 +70,7 @@ public class BorrowingService {
         BorrowingRecord borrowingRecord = borrowingRecordRepository
                 .findByUserIdAndBookIdAndReturnedDateIsNull(userId, bookId)
                 .orElseThrow(() -> new RuntimeException("No active borrowing record found"));
+        //return date should be set to null if the book is returned
         borrowingRecord.setReturnedDate(new Date());
 
         // Update book availability getting the book from the record
@@ -80,6 +82,13 @@ public class BorrowingService {
 
     public List<BorrowingRecord> getBorrowingHistory(Long userId) {
         return borrowingRecordRepository.findAllByUserIdOrderByBorrowDateDesc(userId);
+    }
+
+    public List<Book> getCurrentlyBorrowedBooks(Long userId) {
+        return borrowingRecordRepository.findByUserIdAndReturnedDateIsNull(userId)
+                .stream()
+                .map(BorrowingRecord::getBook)
+                .collect(Collectors.toList());
     }
 
     public boolean canUserBorrow(User user) {
@@ -99,13 +108,22 @@ public class BorrowingService {
      */
     @Transactional
     public void updateAvailability(Book book) {
+        Book managedBook = bookRepository.findById(book.getId())
+                .orElseThrow(() -> new BookNotFoundException("Book not found"));
         boolean available = borrowingRecordRepository
                 .findByBookIdAndReturnedDateIsNull(book.getId())
                 .isEmpty();
 
-        book.setAvailability(available);
-        bookRepository.save(book);
+        managedBook.setAvailability(available);
+        bookRepository.save(managedBook);
     }
+
+    public List<BorrowingRecord> getActiveOverdueRecords() {
+        Date today = new Date();
+        return borrowingRecordRepository.findActiveOverdueRecords(today);
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.lms.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -30,5 +32,6 @@ public class Author {
     private String name;
 
     @OneToMany(mappedBy = "author")
+    @JsonManagedReference
     private List<Book> books;
 }

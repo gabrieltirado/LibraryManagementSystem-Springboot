@@ -38,4 +38,24 @@ public class UserController {
         return userService.getUserById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    // According to the Single Responsibility Principle (S from SOLID), these endpoints
+    // should not be in this controller, but are included here to match the required API paths:
+    // GET /api/users/{userId}/books - View borrowed books
+    // GET /api/users/{userId}/history - View borrowing history
+
+    // These methods are commented out to avoid cluttering the UserController with borrowing-related logic.
+    // They should ideally be in a separate BorrowingController
+
+    /*
+    @GetMapping("/{userId}/books")
+    public List<Book> getBorrowedBooks(@PathVariable Long userId) {
+        return userService.getCurrentlyBorrowedBooks(userId);
+    }
+
+    @GetMapping("/{userId}/history")
+    public List<BorrowingRecord> getBorrowingHistory(@PathVariable Long userId) {
+        return userService.getBorrowingHistory(userId);
+    }
+    */
 }

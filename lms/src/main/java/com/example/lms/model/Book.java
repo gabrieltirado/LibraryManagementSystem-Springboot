@@ -1,5 +1,7 @@
 package com.example.lms.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,5 +38,6 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JsonBackReference
     private Author author;
 }

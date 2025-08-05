@@ -1,5 +1,6 @@
 package com.example.lms.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +41,7 @@ public class User {
     @Column(name = "borrowed_books", nullable = false)
     // Field user in BorrowingRecord refers to the user field in User
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<BorrowingRecord> borrowingRecords;
 
 }

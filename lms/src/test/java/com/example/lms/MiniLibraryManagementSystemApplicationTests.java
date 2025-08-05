@@ -8,6 +8,7 @@ class MiniLibraryManagementSystemApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

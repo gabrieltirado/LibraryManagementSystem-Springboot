@@ -4,8 +4,8 @@ import com.example.lms.exception.BookNotFoundException;
 import com.example.lms.model.Book;
 import com.example.lms.repository.BookRepository;
 import com.example.lms.repository.BorrowingRecordRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,4 +44,18 @@ public class BookService {
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
+
+    /**
+     * Searches for books by title, author, or ISBN.
+     *
+     * @param query the search query
+     * @return a list of books matching the search criteria
+     */
+    @Cacheable("books")
+    public List<Book> searchBooks(String query) {
+        return bookRepository.findByTitleContainingIgnoreCaseOrAuthor_NameContainingIgnoreCaseOrIsbnContainingIgnoreCase(
+                query, query, query
+        );
+    }
+
 }
